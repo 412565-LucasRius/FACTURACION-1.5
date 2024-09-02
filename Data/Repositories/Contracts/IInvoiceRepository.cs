@@ -8,9 +8,7 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Contracts
 
     bool CreateInvoice(Invoice invoice);
 
-    List<Invoice> GetInvoiceByDate(DateTime dateTime);
-
-    int GetLastInvoiceId();
+    List<Invoice> GetInvoiceByDate(int day);
 
     }
   }

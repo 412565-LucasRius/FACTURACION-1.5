@@ -1,4 +1,5 @@
-﻿using ProyectoFacturacion_Practica01_.Properties;
+﻿using ProyectoFacturacion_Practica01_.Domain;
+using ProyectoFacturacion_Practica01_.Properties;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -91,7 +92,7 @@ namespace ProyectoFacturacion_Practica01_.Data.Utils
       return rows;
       }
 
-    public int ExecuteSPDMLTransaction(string sp1, string sp2, List<ParameterSQL> parameters, List<ParameterSQL> detailParameters)
+    public int ExecuteSPDMLTransaction(string sp1, string sp2, List<ParameterSQL> parameters, Dictionary<InvoiceDetail, List<ParameterSQL>> detailParametersPerInvoice)
       {
       int rows = 0;
 
@@ -115,22 +116,27 @@ namespace ProyectoFacturacion_Practica01_.Data.Utils
           }
         rows = command.ExecuteNonQuery();
 
-        int invoiceId = (int)command.Parameters[2].Value;
-
-        var detailCmd = new SqlCommand(sp2, _connection, _transaction);
+        int invoiceId = (int)command.Parameters["@ID"].Value;
 
 
-        detailCmd.Parameters.AddWithValue("@INVOICE_ID", invoiceId);
-        foreach (var dp in detailParameters)
+        foreach (var detail in detailParametersPerInvoice)
           {
+          var detailCmd = new SqlCommand(sp2, _connection, _transaction)
+            {
+            CommandType = CommandType.StoredProcedure
+            };
 
-          Console.WriteLine(dp.Name, dp.Value);
-          detailCmd.CommandType = CommandType.StoredProcedure;
-          detailCmd.Parameters.AddWithValue(dp.Name, dp.Value);
+          detailCmd.Parameters.AddWithValue("@INVOICE_ID", invoiceId);
+          foreach (var value in detail.Value)
+            {
 
+            detailCmd.Parameters.AddWithValue(value.Name, value.Value);
+            }
+
+
+
+          rows += detailCmd.ExecuteNonQuery();
           }
-        rows += detailCmd.ExecuteNonQuery();
-        Console.WriteLine("");
 
         _transaction.Commit();
         }

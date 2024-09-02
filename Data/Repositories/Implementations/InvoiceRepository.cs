@@ -21,7 +21,8 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
             new ParameterSQL("@PAYMENT_METHOD", 1)
           };
 
-      List<ParameterSQL> detailParameters = new List<ParameterSQL>();
+      Dictionary<InvoiceDetail, List<ParameterSQL>> map = new Dictionary<InvoiceDetail, List<ParameterSQL>>();
+      var detailParameters = new List<ParameterSQL>();
       foreach (InvoiceDetail invoiceDetail in invoice.Details)
         {
         detailParameters = new List<ParameterSQL>
@@ -30,10 +31,12 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
           new ParameterSQL("@QUANTITY", invoiceDetail.Quantity)
           };
 
+        map.Add(invoiceDetail, detailParameters);
+
         }
 
       rowsAffected = DataHelper.GetInstance()
-        .ExecuteSPDMLTransaction(procedure, procedure2, parameters, detailParameters);
+        .ExecuteSPDMLTransaction(procedure, procedure2, parameters, map);
 
       return rowsAffected > 0;
       }
@@ -60,14 +63,33 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
       return invoices;
       }
 
-    public List<Invoice> GetInvoiceByDate(DateTime dateTime)
+    public List<Invoice> GetInvoiceByDate(int day)
       {
-      throw new NotImplementedException();
-      }
+      List<Invoice> invoices = new List<Invoice>();
+      var parameters = new List<ParameterSQL> { new ParameterSQL("@DAY", day) };
+      procedure = "SP_SELECT_INVOICE_BY_DATE";
 
-    public int GetLastInvoiceId()
-      {
-      throw new NotImplementedException();
+      DataTable dataTable = DataHelper
+        .GetInstance()
+        .ExecuteSPQuery(procedure, parameters);
+
+      if (dataTable.Rows.Count > 0)
+        {
+
+        foreach (DataRow row in dataTable.Rows)
+          {
+          Invoice invoice = new Invoice
+            {
+            Id = (int)row["ID"],
+            Date = (DateTime)row["PAYDAY"],
+            PaymentMethod = (PaymentMethod)row["PAYMENT_METHOD"],
+            ClientName = (string)row["CLIENT"]
+            };
+
+          invoices.Add(invoice);
+          }
+        }
+      return invoices;
       }
     }
   }
