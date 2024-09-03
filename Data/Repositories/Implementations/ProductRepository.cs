@@ -47,8 +47,10 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
 
       }
 
-    public bool DeleteProduct(int id)
+    public bool DeleteProduct(Product product)
       {
+      int id = product.Id;
+
       var parameters = new List<ParameterSQL> { new ParameterSQL("@ID", id) };
       procedure = "SP_DELETE_PRODUCT";
 
@@ -75,7 +77,7 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
             {
             Id = (int)row["ID"],
             Name = (string)row["PNAME"],
-            Price = (double)row["PRICE"],
+            Price = Convert.ToDouble(row["PRICE"]),
             Available = (bool)row["AVAILABLE"]
             };
 
@@ -101,7 +103,7 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
             {
             Id = (int)row["ID"],
             Name = (string)row["PNAME"],
-            Price = (double)row["PRICE"],
+            Price = Convert.ToDouble(row["PRICE"]),
             Available = (bool)row["AVAILABLE"]
             };
 

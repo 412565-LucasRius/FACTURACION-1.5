@@ -10,6 +10,6 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Contracts
 
     bool AddOrUpdateProduct(Product product);
 
-    bool DeleteProduct(int id);
+    bool DeleteProduct(Product product);
     }
   }
