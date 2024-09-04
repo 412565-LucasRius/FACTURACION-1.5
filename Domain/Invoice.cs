@@ -6,7 +6,7 @@
 
     public DateTime Date { get; set; }
 
-    public PaymentMethod PaymentMethod { get; set; }
+    public int PaymentMethod { get; set; }
 
     public string ClientName { get; set; }
 

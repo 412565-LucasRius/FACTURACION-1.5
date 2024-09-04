@@ -18,7 +18,7 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
       var parameters = new List<ParameterSQL>
           {
             new ParameterSQL("@CLIENT", invoice.ClientName),
-            new ParameterSQL("@PAYMENT_METHOD", 1)
+            new ParameterSQL("@PAYMENT_METHOD", invoice.PaymentMethod)
           };
 
       Dictionary<InvoiceDetail, List<ParameterSQL>> map = new Dictionary<InvoiceDetail, List<ParameterSQL>>();
@@ -55,7 +55,7 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
           {
           Id = (int)row["ID"],
           Date = (DateTime)row["PAYDAY"],
-          PaymentMethod = (PaymentMethod)row["PAYMENT_METHOD"],
+          PaymentMethod = (int)row["PAYMENT_METHOD"],
           ClientName = (string)row["CLIENT"]
           };
         }
@@ -82,7 +82,7 @@ namespace ProyectoFacturacion_Practica01_.Data.Repositories.Implementations
             {
             Id = (int)row["ID"],
             Date = (DateTime)row["PAYDAY"],
-            PaymentMethod = (PaymentMethod)row["PAYMENT_METHOD"],
+            PaymentMethod = (int)row["PAYMENT_METHOD"],
             ClientName = (string)row["CLIENT"]
             };
 
